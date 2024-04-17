@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if name %}
+    <h1>{{ name }}</h1>
+{% else %}
+    <h1>adduser</h1>
+    <br/>
+    <form method="post">
+        {{ form_obj.hidden_tag() }}
+        {{ form_obj.name.label(class="form-label")}}
+        {{ form_obj.name(class="form-control")}}
+        <br/>
+        {{ form_obj.email.label(class="form-label")}}
+        {{ form_obj.email(class="form-control")}}
+        <br/>
+        {{ form_obj.submit(class="btn btn-primary mb-3")}}
+
+
+    </form>
+{% endif %}
+{% endblock%}

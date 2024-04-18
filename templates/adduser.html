@@ -1,5 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+{% with success = get_flashed_messages(category_filter=["success"]) %}
+{% if success %}
+    {% for msg in success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{msg}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    
+    {% endfor%}
+{% endif %}
+{% endwith %}
+
 
 {% if name %}
     <h1>{{ name }}</h1>
@@ -18,5 +30,9 @@
 
 
     </form>
+    <br><br/><br/>
+    {% for usr in AllUsers%}
+        {{usr.id}}. {{usr.name}}-{{usr.email}}<br/>
+    {% endfor %}
 {% endif %}
 {% endblock%}

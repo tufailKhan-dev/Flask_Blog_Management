@@ -18,7 +18,7 @@
 {% else %}
     <h1>adduser</h1>
     <br/>
-    <form method="post">
+    <form method="post" action="/user/add">
         {{ form_obj.hidden_tag() }}
         {{ form_obj.name.label(class="form-label")}}
         {{ form_obj.name(class="form-control")}}
@@ -30,9 +30,13 @@
 
 
     </form>
-    <br><br/><br/>
-    {% for usr in AllUsers%}
-        {{usr.id}}. {{usr.name}}-{{usr.email}}<br/>
+    <br/><br/><br/>
+    <table class="table table-striped">
+    {% for usr in AllUsers %}
+        <tr>
+            <td>{{usr.id}}. {{usr.name}}-{{usr.email}}</td>
+        </tr>
     {% endfor %}
+    </table>
 {% endif %}
 {% endblock%}

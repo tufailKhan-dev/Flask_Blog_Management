@@ -7,8 +7,12 @@ from wtforms.validators import DataRequired
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
-# add data base
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite'
+# add data base old database
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite'
+# new Mysql database
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db_name'
+# new database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:A334390tuffu@localhost/our_users'
 app.config['SQLALCHEMY_TRANK_MODIFICATIONS'] = False
 #initial lize database
 db = SQLAlchemy(app)
@@ -54,15 +58,18 @@ def adduser():
     name = None
     form_obj = UserForm()
     if form_obj.validate_on_submit():
-        user = db.session.query(Users.query.filter_by(email=form_obj.email.data).first())
-        if user is None:    
-            user = Users(name=form_obj.name.data, email=form_obj.email.data)
-            db.session.add(user)
-            db.session.commit()
+        try:
+            user = Users.query.filter_by(email=form_obj.email.data).first()
+            if user is None:
+                user = Users(name=form_obj.name.data, email=form_obj.email.data)
+                db.session.add(user)
+                db.session.commit()
+        except Exception as e:
+                print("error:", e)
         name = form_obj.name.data
         form_obj.name.data = ''
         form_obj.email.data = ''
-        flash("User Added Successfully!")
+        flash("User Added Successfully!",'success')
     AllUsers = Users.query.order_by(Users.date_added)
     return render_template("adduser.html",
                            form_obj=form_obj,

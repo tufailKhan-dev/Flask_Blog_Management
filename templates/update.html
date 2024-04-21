@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<!-- success message -->
 {% with success = get_flashed_messages(category_filter=["success"]) %}
 {% if success %}
     {% for msg in success %}
@@ -12,34 +13,42 @@
 {% endif %}
 {% endwith %}
 
+<!-- error message  -->
+{% with error = get_flashed_messages(category_filter=["error"]) %}
+{% if error %}
+    {% for msg in error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{msg}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    
+    {% endfor%}
+{% endif %}
+{% endwith %}
+
 
 {% if name %}
     <h1>{{ name }}</h1>
 {% else %}
-    <h1>adduser</h1>
+    <h1>update users</h1>
     <br/>
-    <form method="post" action="/user/add">
+    <form  action = "/update/{{ name_to_update.id}}"  method="post" >
         {{ form_obj.hidden_tag() }}
         {{ form_obj.name.label(class="form-label")}}
-        {{ form_obj.name(class="form-control")}}
+        {{ form_obj.name(class="form-control", value=name_to_update.name)}}
         <br/>
         {{ form_obj.email.label(class="form-label")}}
-        {{ form_obj.email(class="form-control")}}
+        {{ form_obj.email(class="form-control",  value=name_to_update.email)}}
+        <br/>
         <br/>
         {{ form_obj.favorite_color.label(class="form-label")}}
-        {{ form_obj.favorite_color(class="form-control")}}
+        {{ form_obj.favorite_color(class="form-control",  value=name_to_update.favorite_color)}}
         <br/>
         {{ form_obj.submit(class="btn btn-primary mb-3")}}
+        <a href="{{ url_for('delete',id=id)}}" class="btn btn-danger">Delete</a>
 
 
     </form>
     <br/><br/><br/>
-    <table class="table table-striped">
-    {% for usr in AllUsers %}
-        <tr>
-            <td>{{usr.id}}.<a href="{{ url_for('update',id=usr.id)}}"> {{usr.name}}</a>-{{usr.email}}-{{ usr.favorite_color }}-<a href="{{ url_for('delete',id=usr.id)}}">delete</a></td>
-        </tr>
-    {% endfor %}
-    </table>
 {% endif %}
 {% endblock%}

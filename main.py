@@ -63,6 +63,11 @@ class NameerForm(FlaskForm):
     name = StringField("what is your name", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+#for testpwd
+class TestForm(FlaskForm):
+    email = StringField("what is your email", validators=[DataRequired()])
+    password = PasswordField("enter your password",validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 #Filters!!!
 #safe
@@ -180,5 +185,28 @@ def form():
 
     return render_template('form.html', name=name, form_obj=form_obj)
 
+
+@app.route('/testpwd',methods=['GET','POST'])
+def testpwd():
+    email = None
+    password = None
+    pw_to_check = None
+    passed = None
+    test_obj = TestForm()
+    if test_obj.validate_on_submit():
+        email = test_obj.email.data
+        password = test_obj.password.data
+
+        #clear the form
+        test_obj.email.data = ''
+        test_obj.password.data = ''
+        #check user info
+        pw_to_check = Users.query.filter_by(email=email).first()
+        if pw_to_check:
+            #check password hash
+            passed = check_password_hash(pw_to_check.password_hash, password)
+            return render_template("testpassword.html",passed = passed,email = email, password = password, pw_to_check = pw_to_check, test_obj = test_obj)
+        
+    return render_template("testpassword.html",passed = passed,email = email, password = password, pw_to_check = pw_to_check, test_obj = test_obj)
 
 

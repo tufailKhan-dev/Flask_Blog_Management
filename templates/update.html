@@ -45,7 +45,7 @@
         {{ form_obj.favorite_color(class="form-control",  value=name_to_update.favorite_color)}}
         <br/>
         {{ form_obj.submit(class="btn btn-primary mb-3")}}
-        <a href="{{ url_for('delete',id=id)}}" class="btn btn-danger">Delete</a>
+        <a href="{{ url_for('delete',id=name_to_update.id)}}" class="btn btn-danger">Delete</a>
 
 
     </form>

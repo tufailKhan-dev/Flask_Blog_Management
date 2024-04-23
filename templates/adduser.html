@@ -26,6 +26,17 @@
         {{ form_obj.email.label(class="form-label")}}
         {{ form_obj.email(class="form-control")}}
         <br/>
+
+        {{ form_obj.password_hash.label(class="form-label")}}
+        {{ form_obj.password_hash(class="form-control")}}
+
+
+        <br/>
+        {{ form_obj.password_hash2.label(class="form-label")}}
+        {{ form_obj.password_hash2(class="form-control")}}
+
+
+        <br/>
         {{ form_obj.favorite_color.label(class="form-label")}}
         {{ form_obj.favorite_color(class="form-control")}}
         <br/>
@@ -37,7 +48,7 @@
     <table class="table table-striped">
     {% for usr in AllUsers %}
         <tr>
-            <td>{{usr.id}}.<a href="{{ url_for('update',id=usr.id)}}"> {{usr.name}}</a>-{{usr.email}}-{{ usr.favorite_color }}-<a href="{{ url_for('delete',id=usr.id)}}">delete</a></td>
+            <td>{{usr.id}}.<a href="{{ url_for('update',id=usr.id)}}"> {{usr.name}}</a>-{{usr.email}}-{{ usr.favorite_color }}-{{ usr.password_hash }}-<a href="{{ url_for('delete',id=usr.id)}}">delete</a></td>
         </tr>
     {% endfor %}
     </table>

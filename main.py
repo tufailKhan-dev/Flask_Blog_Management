@@ -5,8 +5,8 @@ from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.hybrid import hybrid_property
-from wtforms import SubmitField, StringField
-from wtforms.validators import DataRequired
+from wtforms import PasswordField, SubmitField, StringField
+from wtforms.validators import DataRequired, EqualTo, Length
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
@@ -29,7 +29,7 @@ class Users(db.Model):
     favorite_color = db.Column(db.String(120))
     date_added= db.Column(db.DateTime,default = datetime.now)
     #password 
-    password_hash = db.Column(db.String(120))
+    password_hash = db.Column(db.String(200))
     @property
     def _password(self):
         raise AttributeError('password is not readable attribte')
@@ -52,6 +52,8 @@ class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     favorite_color = StringField("favorite_color")
+    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message='Password much mach')])
+    password_hash2 = PasswordField("Confirm password", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
@@ -81,7 +83,8 @@ def adduser():
         try:
             user = Users.query.filter_by(email=form_obj.email.data).first()
             if user is None:
-                user = Users(name=form_obj.name.data, email=form_obj.email.data, favorite_color= form_obj.favorite_color.data)
+                hashpwd = generate_password_hash(form_obj.password_hash.data)   
+                user = Users(name=form_obj.name.data, email=form_obj.email.data, favorite_color= form_obj.favorite_color.data, password_hash=hashpwd)
                 db.session.add(user)
                 db.session.commit()
         except Exception as e:
@@ -90,6 +93,7 @@ def adduser():
         form_obj.name.data = ''
         form_obj.email.data = ''
         form_obj.favorite_color.data = ''
+        form_obj.password_hash.data = ''
         flash("User Added Successfully!",'success')
     AllUsers = Users.query.order_by(Users.date_added)
     return render_template("adduser.html",

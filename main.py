@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.hybrid import hybrid_property
 from wtforms import PasswordField, SubmitField, StringField
 from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.widgets import TextArea
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
@@ -21,6 +22,44 @@ app.config['SQLALCHEMY_TRANK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 app.app_context().push()
 migrate = Migrate(app,db)
+
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    author = db.Column(db.String(255))
+    Nameslug = db.Column(db.String(255))
+    date_posted = db.Column(db.DateTime, default=datetime.now)
+
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = StringField("Content", validators=[DataRequired()], widget=TextArea())
+    author = StringField("Author", validators=[DataRequired()])
+    slug = StringField("Slug", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+# add blog post
+@app.route('/add-blog-post',methods=['GET','POST'])
+def add_blog_post():
+    form_obj = PostForm()
+    if form_obj.validate_on_submit():
+        post = Posts(title=form_obj.title.data,content=form_obj.content.data,author = form_obj.author.data,Nameslug = form_obj.slug.data)
+        
+        #clear the form
+        form_obj.title.data = ''
+        form_obj.author.data = ''
+        form_obj.content.data = ''
+        form_obj.slug.data = ''
+
+        # Add post data to database
+        db.session.add(post)
+        db.session.commit()
+
+        #return a message
+        flash("Blog Post submitted successfully", 'success')
+    return render_template("add_blog_post.html", form_obj=form_obj)
+
+
 #create a model
 class Users(db.Model):
     id= db.Column(db.Integer, primary_key=True)
@@ -209,4 +248,11 @@ def testpwd():
         
     return render_template("testpassword.html",passed = passed,email = email, password = password, pw_to_check = pw_to_check, test_obj = test_obj)
 
-
+#json data
+@app.route('/data')
+def get_current_date():
+    info = {
+        'name' : 'tufail',
+        'mname' : 'khan'
+    }
+    return info

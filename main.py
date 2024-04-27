@@ -59,6 +59,11 @@ def add_blog_post():
         flash("Blog Post submitted successfully", 'success')
     return render_template("add_blog_post.html", form_obj=form_obj)
 
+# show blogs:
+@app.route('/showblog')
+def Show_Blog():
+    Allblog = Posts.query.order_by(Posts.date_posted)
+    return render_template("Blog.html", Allblog=Allblog)
 
 #create a model
 class Users(db.Model):

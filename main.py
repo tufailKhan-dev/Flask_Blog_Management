@@ -65,6 +65,11 @@ def Show_Blog():
     Allblog = Posts.query.order_by(Posts.date_posted)
     return render_template("Blog.html", Allblog=Allblog)
 
+@app.route('/blog/<int:id>')
+def blog(id):
+    blog = Posts.query.get_or_404(id)
+    return render_template("singleblog.html",blog=blog)
+
 #create a model
 class Users(db.Model):
     id= db.Column(db.Integer, primary_key=True)

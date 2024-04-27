@@ -10,4 +10,5 @@
     {{blog.date_posted}}<br/>
 </div>
 <a href="{{url_for('Show_Blog')}}" class="btn btn-outline-secondary btn-sm"> Back</a>
+<a href="{{url_for('deleteblog', id=blog.id)}}" class="btn btn-outline-danger">Delete blog</a>
 {% endblock %}

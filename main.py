@@ -70,7 +70,18 @@ def blog(id):
     blog = Posts.query.get_or_404(id)
     return render_template("singleblog.html",blog=blog)
 
-
+#delete blog
+@app.route('/blog/delete/<int:id>')
+def deleteblog(id):
+    blog = Posts.query.get_or_404(id)
+    try:
+        db.session.delete(blog)
+        db.session.commit()
+        flash('blog has been deleted', 'success')
+        return redirect(url_for('Show_Blog'))
+    except Exception as err:
+        print("Error:", err)
+        flash("blog not hasbeen deleted", 'error')
 @app.route('/blog/edit/<int:id>', methods = ['GET', 'POST'])
 def editblog(id):
     blog = Posts.query.get_or_404(id)

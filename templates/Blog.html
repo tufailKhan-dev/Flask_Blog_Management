@@ -10,6 +10,7 @@
     {{blog.content}}<br/>
     {{blog.date_posted}}<br/>
     <a href="{{url_for('blog', id=blog.id)}}" class="btn btn-outline-secondary">View Blog</a>
+    <a href="{{url_for('editblog', id=blog.id)}}" class="btn btn-outline-secondary">edit blog</a>
 </div>
 {% endfor %}
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask,render_template, flash, request
+from flask import Flask, redirect,render_template, flash, request, url_for
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -70,6 +70,27 @@ def blog(id):
     blog = Posts.query.get_or_404(id)
     return render_template("singleblog.html",blog=blog)
 
+
+@app.route('/blog/edit/<int:id>', methods = ['GET', 'POST'])
+def editblog(id):
+    blog = Posts.query.get_or_404(id)
+    form_obj = PostForm()
+    if form_obj.validate_on_submit():
+        blog.title = form_obj.title.data
+        blog.author = form_obj.author.data
+        blog.content = form_obj.content.data
+        blog.Nameslug = form_obj.slug.data
+        #update DAtabase
+        db.session.add(blog)
+        db.session.commit()
+        flash("Post has been updated")
+        return redirect(url_for('blog',id = blog.id))
+    form_obj.title.data = blog.title
+    form_obj.author.data = blog.author
+    form_obj.slug.data = blog.Nameslug
+    form_obj.content.data = blog.content
+    return render_template("edit_blog.html", form_obj=form_obj)
+    
 #create a model
 class Users(db.Model):
     id= db.Column(db.Integer, primary_key=True)

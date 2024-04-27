@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1> Blog's</h1>
+{% for blog in Allblog %}
+<div class="shadow p-3 mb-5 bg-body rounded">    
+<h2>{{blog.title}}</h2><br/>
+    By:{{blog.author}}<br/>
+    {{blog.slug}}<br/>
+    {{blog.content}}<br/>
+    {{blog.date_posted}}<br/>
+</div>
+{% endfor %}
+{% endblock %}

@@ -19,6 +19,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('logout')}}">Logout</a> 
           </li>
+          <li class="nav-item">
+           <a class="nav-link" href="{{url_for('add_blog_post')}}">ADD BLOG</a> 
+           </li>
           {% else %}
           <li class="nav-item">
              <a class="nav-link" href="{{url_for('adduser')}}">Register</a> 
@@ -30,9 +33,6 @@
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('testpwd')}}">TestP</a> 
          </li>
-         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('add_blog_post')}}">ADD BLOG</a> 
-          </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('Show_Blog')}}">BLOG'S</a> 
             </li>

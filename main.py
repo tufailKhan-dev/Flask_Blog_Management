@@ -170,6 +170,7 @@ def dashboard():
 """ blog start """
 # add blog post
 @app.route('/add-blog-post',methods=['GET','POST'])
+@login_required
 def add_blog_post():
     form_obj = PostForm()
     if form_obj.validate_on_submit():

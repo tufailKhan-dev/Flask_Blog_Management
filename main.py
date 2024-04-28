@@ -273,6 +273,7 @@ def main():
 
 # Update the record 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
     form_obj = UserForm()
     name_to_update = Users.query.get_or_404(id)
@@ -280,6 +281,7 @@ def update(id):
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
         name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.username = request.form['username']
         try:
             db.session.commit()
             flash('updated successfully', 'success')

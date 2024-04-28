@@ -26,6 +26,8 @@
             <Strong>Favorite-color</strong> {{current_user.favorite_color}} <br/>
             <Strong>Date Join:</strong> {{current_user.date_added}} <br/>
           <a href="{{url_for('logout')}}" class="btn btn-primary">Logout</a>
+          <a href="{{ url_for('delete',id=current_user.id)}}" class="btn btn-danger">Delete</a>
+          <a href="{{url_for('update', id=current_user.id)}}" class="btn btn-primary">update</a>
         </div>
       </div>
     <br><br>

@@ -8,6 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from wtforms import PasswordField, SubmitField, StringField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
+from flask_login import LoginManager, UserMixin, login_user,login_required,logout_user,current_user
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
@@ -38,6 +39,135 @@ class PostForm(FlaskForm):
     slug = StringField("Slug", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+    
+#create a model
+class Users(db.Model, UserMixin):
+    id= db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable = False, unique = True)
+    name = db.Column(db.String(100),nullable = False)
+    email= db.Column(db.String(100),nullable = False, unique = True)
+    favorite_color = db.Column(db.String(120))
+    date_added= db.Column(db.DateTime,default = datetime.now)
+    #password 
+    password_hash = db.Column(db.String(200))
+    @property
+    def _password(self):
+        raise AttributeError('password is not readable attribte')
+    
+    @_password.setter
+    def _password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+    #create sring
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+#user form
+class UserForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
+    favorite_color = StringField("favorite_color")
+    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message='Password much mach')])
+    password_hash2 = PasswordField("Confirm password", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+
+#create flask form class
+class NameerForm(FlaskForm):
+    name = StringField("what is your name", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+#for testpwd
+class TestForm(FlaskForm):
+    email = StringField("what is your email", validators=[DataRequired()])
+    password = PasswordField("enter your password",validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+#Filters!!!
+#safe
+#trim
+#striptag
+#title
+#upper
+#lower
+
+# for Loginform
+
+class Loginform(FlaskForm):
+    username =  StringField("Username", validators=[DataRequired()])
+    User_password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField()
+
+
+
+""" login start """
+#Flask login stuff
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+#loader
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+    form_obj = Loginform()
+    if form_obj.validate_on_submit():
+        user = Users.query.filter_by(username=form_obj.username.data).first()
+
+        if user:
+            if check_password_hash(user.password_hash, form_obj.User_password.data):
+                login_user(user)
+                flash('login successfully ', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash("wrong password", 'error')
+        else:
+            flash(" that user not exits- Try again later", 'error')
+
+    return render_template("login.html", form_obj=form_obj)
+
+
+""" login end """
+""" logout start """
+
+@app.route('/logout', methods = ['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    flash('you logout successfully', 'success')
+    return redirect(url_for('login'))
+
+
+
+""" logout end """
+
+
+""" dashboard start """
+
+@app.route("/dashboard", methods = ["GET", "POST"])
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
+
+
+
+
+
+""" dashboard end """
+
+
+
+
+""" blog start """
 # add blog post
 @app.route('/add-blog-post',methods=['GET','POST'])
 def add_blog_post():
@@ -82,6 +212,8 @@ def deleteblog(id):
     except Exception as err:
         print("Error:", err)
         flash("blog not hasbeen deleted", 'error')
+
+#editblog
 @app.route('/blog/edit/<int:id>', methods = ['GET', 'POST'])
 def editblog(id):
     blog = Posts.query.get_or_404(id)
@@ -101,65 +233,8 @@ def editblog(id):
     form_obj.slug.data = blog.Nameslug
     form_obj.content.data = blog.content
     return render_template("edit_blog.html", form_obj=form_obj)
-    
-#create a model
-class Users(db.Model):
-    id= db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100),nullable = False)
-    email= db.Column(db.String(100),nullable = False, unique = True)
-    favorite_color = db.Column(db.String(120))
-    date_added= db.Column(db.DateTime,default = datetime.now)
-    #password 
-    password_hash = db.Column(db.String(200))
-    @property
-    def _password(self):
-        raise AttributeError('password is not readable attribte')
-    
-    @_password.setter
-    def _password(self, password):
-        self.password_hash = generate_password_hash(password)
-    
-    
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
-
-    #create sring
-    def __repr__(self):
-        return '<Name %r>' % self.name
-
-#user form
-class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    favorite_color = StringField("favorite_color")
-    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message='Password much mach')])
-    password_hash2 = PasswordField("Confirm password", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-
-
-#create flask form class
-class NameerForm(FlaskForm):
-    name = StringField("what is your name", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-#for testpwd
-class TestForm(FlaskForm):
-    email = StringField("what is your email", validators=[DataRequired()])
-    password = PasswordField("enter your password",validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-#Filters!!!
-#safe
-#trim
-#striptag
-#title
-#upper
-#lower
-
-
-
+""" blog end """
 
 @app.route('/user/add', methods=["GET","POST"])
 def adduser():
@@ -170,7 +245,7 @@ def adduser():
             user = Users.query.filter_by(email=form_obj.email.data).first()
             if user is None:
                 hashpwd = generate_password_hash(form_obj.password_hash.data)   
-                user = Users(name=form_obj.name.data, email=form_obj.email.data, favorite_color= form_obj.favorite_color.data, password_hash=hashpwd)
+                user = Users(name=form_obj.name.data,username=form_obj.username.data, email=form_obj.email.data, favorite_color= form_obj.favorite_color.data, password_hash=hashpwd)
                 db.session.add(user)
                 db.session.commit()
         except Exception as e:
@@ -178,6 +253,7 @@ def adduser():
         name = form_obj.name.data
         form_obj.name.data = ''
         form_obj.email.data = ''
+        form_obj.username.data = ''
         form_obj.favorite_color.data = ''
         form_obj.password_hash.data = ''
         flash("User Added Successfully!",'success')

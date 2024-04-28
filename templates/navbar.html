@@ -12,12 +12,21 @@
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('form')}}">Form</a>
           </li>
+          {% if current_user.is_authenticated %}
           <li class="nav-item">
-             <a class="nav-link" href="{{url_for('adduser')}}">Add User</a> 
+            <a class="nav-link" href="{{url_for('dashboard')}}">Dashboard</a> 
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('logout')}}">Logout</a> 
+          </li>
+          {% else %}
+          <li class="nav-item">
+             <a class="nav-link" href="{{url_for('adduser')}}">Register</a> 
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('login')}}">Login</a> 
          </li>
+         {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('testpwd')}}">TestP</a> 
          </li>

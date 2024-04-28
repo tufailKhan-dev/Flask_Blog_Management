@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+{% with success = get_flashed_messages(category_filter=["success"]) %}
+{% if success %}
+    {% for msg in success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{msg}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    
+    {% endfor%}
+{% endif %}
+{% endwith %}
+
+
+    <h1> Dashboard </h1>
+    <h2> u are login</h2>
+    <a href="{{url_for('logout')}}">logout</a>
+{% endblock%}

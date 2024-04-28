@@ -14,6 +14,20 @@
 
 
     <h1> Dashboard </h1>
-    <h2> u are login</h2>
-    <a href="{{url_for('logout')}}">logout</a>
+    <div class="card">
+        <div class="card-header">
+            {{current_user.name}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Welcome to your dashboard</h5>
+          <p class="card-text">hey!! today is goodday</p>
+          <Strong>Name:</strong> {{current_user.name}} <br/>
+            <Strong>email:</strong> {{current_user.email}} <br/>
+            <Strong>Favorite-color</strong> {{current_user.favorite_color}} <br/>
+            <Strong>Date Join:</strong> {{current_user.date_added}} <br/>
+          <a href="{{url_for('logout')}}" class="btn btn-primary">Logout</a>
+        </div>
+      </div>
+    <br><br>
+    
 {% endblock%}

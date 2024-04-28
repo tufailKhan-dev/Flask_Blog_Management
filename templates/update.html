@@ -26,11 +26,8 @@
 {% endif %}
 {% endwith %}
 
-
-{% if name %}
-    <h1>{{ name }}</h1>
-{% else %}
-    <h1>update users</h1>
+{% if id == current_user.id %}
+<h1>update users</h1>
     <br/>
     <form  action = "/update/{{ name_to_update.id}}"  method="post" >
         {{ form_obj.hidden_tag() }}
@@ -53,5 +50,7 @@
 
     </form>
     <br/><br/><br/>
+{% else %}
+<h2> access denied</h2>
 {% endif %}
 {% endblock%}

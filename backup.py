@@ -1,11 +1,14 @@
 from flask import Flask, redirect,render_template, flash, request, url_for
+from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.hybrid import hybrid_property
+from wtforms import PasswordField, SubmitField, StringField
+from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.widgets import TextArea
 from flask_login import LoginManager, UserMixin, login_user,login_required,logout_user,current_user
-from formsClasses import *
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
@@ -29,6 +32,12 @@ class Posts(db.Model):
     Nameslug = db.Column(db.String(255))
     date_posted = db.Column(db.DateTime, default=datetime.now)
 
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = StringField("Content", validators=[DataRequired()], widget=TextArea())
+    author = StringField("Author", validators=[DataRequired()])
+    slug = StringField("Slug", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
     
 #create a model
@@ -58,9 +67,28 @@ class Users(db.Model, UserMixin):
     def __repr__(self):
         return '<Name %r>' % self.name
 
+#user form
+class UserForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
+    favorite_color = StringField("favorite_color")
+    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message='Password much mach')])
+    password_hash2 = PasswordField("Confirm password", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 
 
+#create flask form class
+class NameerForm(FlaskForm):
+    name = StringField("what is your name", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+#for testpwd
+class TestForm(FlaskForm):
+    email = StringField("what is your email", validators=[DataRequired()])
+    password = PasswordField("enter your password",validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 #Filters!!!
 #safe
@@ -70,6 +98,12 @@ class Users(db.Model, UserMixin):
 #upper
 #lower
 
+# for Loginform
+
+class Loginform(FlaskForm):
+    username =  StringField("Username", validators=[DataRequired()])
+    User_password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField()
 
 
 
@@ -123,6 +157,10 @@ def logout():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+
+
+
 
 """ dashboard end """
 

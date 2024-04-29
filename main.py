@@ -21,13 +21,6 @@ db = SQLAlchemy(app)
 app.app_context().push()
 migrate = Migrate(app,db)
 
-class Posts(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(255))
-    content = db.Column(db.Text)
-    author = db.Column(db.String(255))
-    Nameslug = db.Column(db.String(255))
-    date_posted = db.Column(db.DateTime, default=datetime.now)
 
 
     
@@ -41,6 +34,9 @@ class Users(db.Model, UserMixin):
     date_added= db.Column(db.DateTime,default = datetime.now)
     #password 
     password_hash = db.Column(db.String(200))
+    #users can have many post
+    posts=db.relationship('Posts', backref='poster')
+
     @property
     def _password(self):
         raise AttributeError('password is not readable attribte')
@@ -53,6 +49,15 @@ class Users(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    #author = db.Column(db.String(255))
+    Nameslug = db.Column(db.String(255))
+    date_posted = db.Column(db.DateTime, default=datetime.now)
+    #foreign key to link users (refer to primary key)
+    poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     #create sring
     def __repr__(self):
@@ -136,11 +141,11 @@ def dashboard():
 def add_blog_post():
     form_obj = PostForm()
     if form_obj.validate_on_submit():
-        post = Posts(title=form_obj.title.data,content=form_obj.content.data,author = form_obj.author.data,Nameslug = form_obj.slug.data)
+        poster = current_user.id
+        post = Posts(title=form_obj.title.data,content=form_obj.content.data,poster_id=poster,Nameslug = form_obj.slug.data)
         
         #clear the form
         form_obj.title.data = ''
-        form_obj.author.data = ''
         form_obj.content.data = ''
         form_obj.slug.data = ''
 
@@ -183,7 +188,6 @@ def editblog(id):
     form_obj = PostForm()
     if form_obj.validate_on_submit():
         blog.title = form_obj.title.data
-        blog.author = form_obj.author.data
         blog.content = form_obj.content.data
         blog.Nameslug = form_obj.slug.data
         #update DAtabase
@@ -192,7 +196,6 @@ def editblog(id):
         flash("Post has been updated")
         return redirect(url_for('blog',id = blog.id))
     form_obj.title.data = blog.title
-    form_obj.author.data = blog.author
     form_obj.slug.data = blog.Nameslug
     form_obj.content.data = blog.content
     return render_template("edit_blog.html", form_obj=form_obj)

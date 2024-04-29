@@ -26,7 +26,7 @@
 {% for blog in Allblog %}
 <div class="shadow p-3 mb-5 bg-body rounded">    
 <h2>{{blog.title}}</h2><br/>
-    By:{{blog.author}}<br/>
+    By:{{blog.poster.name}}<br/>
     {{blog.slug}}<br/>
     {{blog.content}}<br/>
     {{blog.date_posted}}<br/>

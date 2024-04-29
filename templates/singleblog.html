@@ -4,13 +4,13 @@
 <h1> Blog's</h1>
 <div class="shadow p-3 mb-5 bg-body rounded">    
 <h2>{{blog.title}}</h2><br/>
-    By:{{blog.author}}<br/>
+    By:{{blog.poster.name}}<br/>
     {{blog.slug}}<br/>
     {{blog.content}}<br/>
     {{blog.date_posted}}<br/>
 </div>
 <a href="{{url_for('Show_Blog')}}" class="btn btn-outline-secondary btn-sm"> Back</a>
-{% if current_user.is_authenticated%}
+{% if current_user.is_authenticated and current_user.id == blog.poster.id%}
 <a href="{{url_for('deleteblog', id=blog.id)}}" class="btn btn-outline-danger">Delete blog</a>
 {% endif %}
 {% endblock %}

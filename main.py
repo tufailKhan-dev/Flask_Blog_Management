@@ -170,35 +170,50 @@ def blog(id):
 
 #delete blog
 @app.route('/blog/delete/<int:id>')
+@login_required
 def deleteblog(id):
     blog = Posts.query.get_or_404(id)
-    try:
-        db.session.delete(blog)
-        db.session.commit()
-        flash('blog has been deleted', 'success')
-        return redirect(url_for('Show_Blog'))
-    except Exception as err:
-        print("Error:", err)
-        flash("blog not hasbeen deleted", 'error')
+    id= current_user.id
+    if id == blog.poster.id:
+        try:
+            db.session.delete(blog)
+            db.session.commit()
+            flash('blog has been deleted', 'success')
+            Allblog = Posts.query.order_by(Posts.date_posted)
+            return render_template('Blog.html', Allblog=Allblog)
+        except Exception as err:
+            print("Error:", err)
+            flash("blog not hasbeen deleted", 'error')
+    else:
+        flash('u can not delete this posts', 'error')
+        Allblog = Posts.query.order_by(Posts.date_posted)
+        return render_template('Blog.html', Allblog=Allblog)
+
+
 
 #editblog
 @app.route('/blog/edit/<int:id>', methods = ['GET', 'POST'])
 def editblog(id):
     blog = Posts.query.get_or_404(id)
-    form_obj = PostForm()
-    if form_obj.validate_on_submit():
-        blog.title = form_obj.title.data
-        blog.content = form_obj.content.data
-        blog.Nameslug = form_obj.slug.data
-        #update DAtabase
-        db.session.add(blog)
-        db.session.commit()
-        flash("Post has been updated")
-        return redirect(url_for('blog',id = blog.id))
-    form_obj.title.data = blog.title
-    form_obj.slug.data = blog.Nameslug
-    form_obj.content.data = blog.content
-    return render_template("edit_blog.html", form_obj=form_obj)
+    id = current_user.id
+    if id == blog.poster.id:
+        form_obj = PostForm()
+        if form_obj.validate_on_submit():
+            blog.title = form_obj.title.data
+            blog.content = form_obj.content.data
+            blog.Nameslug = form_obj.slug.data
+            #update DAtabase
+            db.session.add(blog)
+            db.session.commit()
+            flash("Post has been updated")
+            return redirect(url_for('blog',id = blog.id))
+        form_obj.title.data = blog.title
+        form_obj.slug.data = blog.Nameslug
+        form_obj.content.data = blog.content
+        return render_template("edit_blog.html", form_obj=form_obj)
+    else:
+        flash('u can not edit this blog', 'error')
+        return redirect(url_for('Show_Blog'))
 
 """ blog end """
 
@@ -263,6 +278,7 @@ def update(id):
 
 
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
     user_to_delete = Users.query.get_or_404(id)
     name = None

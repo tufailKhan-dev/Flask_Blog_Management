@@ -13,15 +13,17 @@
 {% endwith %}
 {% with error = get_flashed_messages(category_filter=["error"]) %}
 {% if error %}
-    {% for msg in success %}
+    {% for msg in error %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{msg}}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
-    
     {% endfor%}
 {% endif %}
 {% endwith %}
+
+
+
 <h1> Blog's</h1>
 {% for blog in Allblog %}
 <div class="shadow p-3 mb-5 bg-body rounded">    
@@ -31,7 +33,7 @@
     {{blog.content}}<br/>
     {{blog.date_posted}}<br/>
     <a href="{{url_for('blog', id=blog.id)}}" class="btn btn-outline-secondary">View Blog</a>
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated and current_user.id == blog.poster.id %}
     <a href="{{url_for('editblog', id=blog.id)}}" class="btn btn-outline-secondary">edit blog</a>
     {% endif %}
 </div>

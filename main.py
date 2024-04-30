@@ -45,7 +45,6 @@ class Users(db.Model, UserMixin):
     def _password(self, password):
         self.password_hash = generate_password_hash(password)
     
-    
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -60,8 +59,8 @@ class Posts(db.Model):
     poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     #create sring
-    def __repr__(self):
-        return '<Name %r>' % self.name
+    # def __repr__(self):
+    #     return '<Name %r>' % self.name
 
 
 
@@ -75,7 +74,21 @@ class Posts(db.Model):
 #upper
 #lower
 
+@app.context_processor
+def base():
+    form_obj = SearchForm()
+    return dict(form_obj=form_obj)
 
+
+@app.route('/search', methods = ['POST'])
+def SearchBlog():
+    form_obj = SearchForm()
+    posts = Posts.query
+    if form_obj.validate_on_submit():
+        search = form_obj.search.data
+        posts = posts.filter(Posts.content.like('%' + search + '%'))
+        posts = posts.order_by(Posts.title).all()
+        return render_template('search.html', form_obj = form_obj, search=search, blogs = posts)
 
 
 """ login start """

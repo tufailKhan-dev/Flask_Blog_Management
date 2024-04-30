@@ -6,7 +6,7 @@
 <h2>{{blog.title}}</h2><br/>
     By:{{blog.poster.name}}<br/>
     {{blog.slug}}<br/>
-    {{blog.content}}<br/>
+    {{blog.content|safe}}<br/>
     {{blog.date_posted}}<br/>
 </div>
 <a href="{{url_for('Show_Blog')}}" class="btn btn-outline-secondary btn-sm"> Back</a>

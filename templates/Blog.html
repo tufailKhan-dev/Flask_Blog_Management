@@ -30,7 +30,7 @@
 <h2>{{blog.title}}</h2><br/>
     By:{{blog.poster.name}}<br/>
     {{blog.slug}}<br/>
-    {{blog.content}}<br/>
+    {{blog.content|safe}}<br/>
     {{blog.date_posted}}<br/>
     <a href="{{url_for('blog', id=blog.id)}}" class="btn btn-outline-secondary">View Blog</a>
     {% if current_user.is_authenticated and current_user.id == blog.poster.id %}

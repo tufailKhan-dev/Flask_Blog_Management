@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>You Search for...</h1>
+<h5>{{ search }}</h5>
+{% for blog in blogs %}
+<div class="shadow p-3 mb-5 bg-body rounded">    
+    <a href="{{url_for('blog', id=blog.id)}}" class="icon-link icon-link-hover link-success link-underline-success link-underline-opacity-25">{{blog.title}}</a>
+    </div>
+
+{% endfor%}
+{% endblock%}

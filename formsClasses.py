@@ -38,3 +38,8 @@ class PostForm(FlaskForm):
     author = StringField("Author")
     slug = StringField("Slug", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class SearchForm(FlaskForm):
+    search = StringField("Search",validators=[DataRequired()])
+    submit = SubmitField("Submit")

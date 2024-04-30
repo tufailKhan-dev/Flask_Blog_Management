@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+
+
 {% with success = get_flashed_messages(category_filter=["success"]) %}
 {% if success %}
     {% for msg in success %}
@@ -35,6 +37,7 @@
 
 
     </form>
-
+    {{ckeditor.load()}}
+    {{ckeditor.config(name='content')}}
 
 {% endblock %}

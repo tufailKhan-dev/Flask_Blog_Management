@@ -6,9 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask_login import LoginManager, UserMixin, login_user,login_required,logout_user,current_user
 from formsClasses import *
+from flask_ckeditor import CKEditor
 # create instance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "my name is Batman"
+#add ck editor
+ckeditor = CKEditor(app)
 # add data base old database
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite'
 # new Mysql database

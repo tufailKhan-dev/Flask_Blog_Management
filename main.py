@@ -264,7 +264,8 @@ def adduser():
 
 @app.route('/')
 def main():
-    return render_template('index.html')
+    Allblog = Posts.query.order_by(Posts.date_posted)
+    return render_template('index.html', Allblog=Allblog)
 
 
 # Update the record 

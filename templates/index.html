@@ -15,8 +15,20 @@
             <link rel="stylesheet" href="">
         </head>
         <body>
-            <h1>Index</h1>
-            
+            <h1>Well Blogs</h1>
+            {% for blog in Allblog %}
+                <div class="shadow p-3 mb-5 bg-body rounded">    
+                <h2>{{blog.title}}</h2><br/>
+                By:{{blog.poster.name}}<br/>
+                {{blog.slug}}<br/>
+                {{blog.content|safe}}<br/>
+                {{blog.date_posted}}<br/>
+                <a href="{{url_for('blog', id=blog.id)}}" class="btn btn-outline-secondary">View Blog</a>
+                {% if current_user.is_authenticated and current_user.id == blog.poster.id %}
+                <a href="{{url_for('editblog', id=blog.id)}}" class="btn btn-outline-secondary">edit blog</a>
+                {% endif %}
+                </div>
+            {% endfor %}
             <script src="" async defer></script>
         </body>
     </html>
